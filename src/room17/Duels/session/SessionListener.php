@@ -48,7 +48,7 @@ class SessionListener implements Listener {
     
     /**
      * @param PlayerQuitEvent $event
-     * @priority LOWEST
+     * @priority HIGHEST
      */
     public function onQuit(PlayerQuitEvent $event): void {
         $this->manager->closeSession($event->getPlayer());
