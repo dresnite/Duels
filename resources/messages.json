@@ -1,0 +1,9 @@
+{
+  "JOINED_MATCH": "You joined a match against {enemy}",
+  "MATCH_VICTORY": "{winner} won the match against {loser}",
+  "YOU_LOST": "You lost the match against {winner}!",
+  "COUNTDOWN_MESSAGE": "Starting in {time}",
+  "GAME_STARTED": "The game started!",
+  "HOW_TO_USE_DUELS": "These are the commands available on Duels:\n/duels invite <player>: Request a battle to a player\n/duel accepts [player]: Accepts a duel\n/duel ref [player]: Refuses a duel",
+  "NOT_AN_ONLINE_PLAYER": "{name} is not an online player!"
+}

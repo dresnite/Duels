@@ -1,0 +1,7 @@
+name: Duels
+description: A simple 1v1 plugin for PocketMine-MP
+author: GiantQuartz
+website: twitter.com/GiantQuartz
+main: room17\Duels\Duels
+version: 1.0.0
+api: [3.0.0]
