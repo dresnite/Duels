@@ -32,6 +32,9 @@ class Session {
     
     /** @var null|Match */
     private $match;
+
+    /** @var Session[] */
+    private $invitations = [];
     
     /**
      * Session constructor.
@@ -84,6 +87,50 @@ class Session {
      */
     public function setMatch(?Match $match): void {
         $this->match = $match;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getInvitations(): array {
+        return $this->invitations;
+    }
+
+    /**
+     * @param Session $invitation
+     * @return bool
+     */
+    public function hasInvitationFrom(Session $invitation): bool {
+        return in_array($invitation, $this->invitations);
+    }
+
+    /**
+     * @param Session $invite
+     */
+    public function addInvitation(Session $invite): void {
+        $this->invitations[] = $invite;
+    }
+
+    /**
+     * Use this in a custom event, when player
+     * @param Session $session
+     */
+    public function removeInvitationFrom(Session $session): void {
+        $key = array_search($session, $this->invitations);
+        if(isset($this->invitations[$key])) {
+            unset($this->invitations[$key]);
+        } else {
+            $this->manager->getLoader()->getLogger()->error("Couldn't remove an invitation from $session because it doesn't exist");
+        }
+    }
+
+    public function removeSentInvitations(): void {
+        $player = $this->getOwner();
+        foreach($this->manager->getSessions() as $session) {
+            if($session->hasInvitationFrom($this->manager->getSession($player))) {
+                $session->removeInvitationFrom($this->manager->getSession($player));
+            }
+        }
     }
     
     /**

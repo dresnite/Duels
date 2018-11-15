@@ -5,5 +5,9 @@
   "COUNTDOWN_MESSAGE": "Starting in {time}",
   "GAME_STARTED": "The game started!",
   "HOW_TO_USE_DUELS": "These are the commands available on Duels:\n/duels invite <player>: Request a battle to a player\n/duel accepts [player]: Accepts a duel\n/duel ref [player]: Refuses a duel",
-  "NOT_AN_ONLINE_PLAYER": "{name} is not an online player!"
+  "NOT_AN_ONLINE_PLAYER": "{name} is not an online player!",
+  "PLAYER_INVITED_YOU": "{player} has invited you to a duel. Accept the duel with /duel accept {player}",
+  "SUCCESFULLY_INVITED_PLAYER": "You have invited {player} to a duel",
+  "YOU ARE ALREADY ON A MATCH": "You are already on a match!",
+  "YOU_DO_NOT_HAVE_THIS_INVITATION": "You don't have this invitation!"
 }

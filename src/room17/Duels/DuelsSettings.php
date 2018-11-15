@@ -62,7 +62,7 @@ class DuelsSettings {
         foreach($args as $arg => $value) {
             $message = str_replace("{" . $arg . "}", $value, $message);
         }
-        return $message;
+        return Duels::translateColors($message);
     }
     
     public function refreshData(): void {

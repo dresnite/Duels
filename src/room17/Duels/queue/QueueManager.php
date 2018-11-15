@@ -70,6 +70,7 @@ class QueueManager {
             if(isset($this->queue[$username = $session->getUsername()])) {
                 $this->loader->getLogger()->warning("Adding a player $session who was already in the queue");
             }
+            $session->removeSentInvitations();
             $this->queue[$session->getUsername()] = $session;
             $this->searchPossibleMatches();
         }

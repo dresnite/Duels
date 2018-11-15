@@ -55,16 +55,45 @@ class DuelsCommand extends Command {
         switch(strtolower($args[0] ?? "usage")) {
             case "invite":
                 $playerSession = $this->loader->getSessionManager()->getSessionByName($args[1] ?? "");
-                if(!isset($args[1]) or !($playerSession instanceof Session)) {
+                if($playerSession->hasMatch()) {
+                    $session->sendLocalizedMessage("YOU_ARE_ALREADY_ON_A_MATCH");
+                } elseif(!isset($args[1]) or !($playerSession instanceof Session)) {
                     $session->sendLocalizedMessage("NOT_AN_ONLINE_PLAYER", [
                         "name" => $args[1]
                     ]);
-                    return;
+                } else {
+                    $playerSession->addInvitation($session);
+                    $playerSession->sendLocalizedMessage("PLAYER_INVITED_YOU", [
+                        "player" => $session
+                    ]);
+                    $session->sendLocalizedMessage("SUCCESFULLY_INVITED_PLAYER", [
+                        "player" => $playerSession
+                    ]);
                 }
-                 break;
+                break;
             case "accept":
+                $playerSession = $this->loader->getSessionManager()->getSession($args[1] ?? array_pop($session->getInvitations()));
+                if($playerSession->hasMatch()) {
+                    $session->sendLocalizedMessage("YOU_ARE_ALREADY_ON_A_MATCH");
+                } elseif($playerSession != null and $session->hasInvitationFrom($playerSession)) {
+                    $this->loader->getMatchManager()->startMatch($session, $playerSession);
+                } else {
+                    $session->sendLocalizedMessage("YOU_DO_NOT_HAVE_THIS_INVITATION", [
+                        "name" => $playerSession->getUsername()
+                    ]);
+                }
                 break;
             case "deny":
+                $playerSession = $this->loader->getSessionManager()->getSession($args[1] ?? array_pop($session->getInvitations()));
+                if($playerSession->hasMatch()) {
+                    $session->sendLocalizedMessage("YOU_ARE_ALREADY_ON_A_MATCH");
+                } elseif($playerSession != null and $session->hasInvitationFrom($playerSession)) {
+                    $session->removeInvitationFrom($playerSession);
+                } else {
+                    $session->sendLocalizedMessage("YOU_DO_NOT_HAVE_THIS_INVITATION", [
+                        "name" => $playerSession->getUsername()
+                    ]);
+                }
                 break;
             case "usage":
             case "help":
@@ -73,7 +102,6 @@ class DuelsCommand extends Command {
             case "about":
                 $session->getOwner()->sendMessage("Duels {$this->loader->getDescription()->getVersion()} is an open source plugin made by room17 (@GiantQuartz)");
                 break;
-            default:
         }
     }
     
