@@ -39,11 +39,6 @@ class ArenaManager {
     public function __construct(Duels $loader) {
         $this->loader = $loader;
         $loader->getServer()->getPluginManager()->registerEvents(new ArenaListener($this), $loader);
-        
-        // todo remove
-        $level = $this->loader->getServer()->getDefaultLevel();
-        $this->registerArena("Test", "Yo que se", "Author", "Holakase", $level,
-            $level->getSafeSpawn(), $level->getSafeSpawn());
     }
     
     /**
