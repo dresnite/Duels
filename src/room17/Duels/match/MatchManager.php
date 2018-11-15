@@ -96,6 +96,15 @@ class MatchManager {
             "enemy" => $firstSession
         ]);
         $secondSession->getOwner()->teleport($arena->getSecondSpawn());
+    
+        foreach($this->loader->getServer()->getOnlinePlayers() as $player) {
+            $firstPlayer = $firstSession->getOwner();
+            $secondPlayer = $secondSession->getOwner();
+            if($player !== $firstPlayer and $player !== $secondPlayer) {
+                $firstPlayer->hidePlayer($player);
+                $secondPlayer->hidePlayer($player);
+            }
+        }
         
         $this->matches[$identifier] = $match;
         return true;
@@ -106,6 +115,18 @@ class MatchManager {
      */
     public function stopMatch(int $identifier): void {
         if(isset($this->matches[$identifier])) {
+            $firstPlayer = $this->matches[$identifier]->getFirstSession()->getOwner();
+            $secondPlayer = $this->matches[$identifier]->getSecondSession()->getOwner();
+    
+            foreach($this->loader->getServer()->getOnlinePlayers() as $player) {
+                if(!$firstPlayer->canSee($player)) {
+                    $firstPlayer->showPlayer($player);
+                }
+                if(!$secondPlayer->canSee($player)) {
+                    $secondPlayer->showPlayer($player);
+                }
+            }
+            
             $this->loader->getServer()->getPluginManager()->callEvent(new MatchStopEvent($this->matches[$identifier]));
             unset($this->matches[$identifier]);
         } else {

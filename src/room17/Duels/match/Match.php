@@ -156,6 +156,21 @@ class Match {
             case self::STAGE_COUNTDOWN:
                 $this->countdown--;
                 if($this->countdown > 0) {
+                    $arena = $this->getArena();
+                    
+                    $firstSpawn = $arena->getFirstSpawn();
+                    $secondSpawn = $arena->getSecondSpawn();
+                    
+                    $firstPlayer = $this->firstSession->getOwner();
+                    if($firstPlayer->getFloorX() != $firstSpawn->getFloorX() or $firstPlayer->getFloorY() != $firstSpawn->getFloorY()) {
+                        $this->firstSession->getOwner()->teleport($firstSpawn);
+                    }
+    
+                    $secondPlayer = $this->firstSession->getOwner();
+                    if($secondPlayer->getFloorX() != $secondSpawn->getFloorX() or $secondPlayer->getFloorY() != $secondSpawn->getFloorY()) {
+                        $this->secondSession->getOwner()->teleport($firstSpawn);
+                    }
+                    
                     $this->broadcastPopup("COUNTDOWN_MESSAGE", [
                         "time" => $this->countdown
                     ]);
