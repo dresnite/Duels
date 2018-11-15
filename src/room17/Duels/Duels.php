@@ -58,6 +58,7 @@ class Duels extends PluginBase {
         $this->arenaManager = new ArenaManager($this);
         $this->matchManager = new MatchManager($this);
         $this->queueManager = new QueueManager($this);
+        $this->getServer()->getCommandMap()->register("duels", new DuelsCommand($this));
         $this->getLogger()->info("Duels has been enabled");
     }
     
