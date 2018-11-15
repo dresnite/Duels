@@ -55,11 +55,11 @@ class DuelsCommand extends Command {
         switch(strtolower($args[0] ?? "usage")) {
             case "invite":
                 $playerSession = $this->loader->getSessionManager()->getSessionByName($args[1] ?? "");
-                if($playerSession->hasMatch()) {
+                if($session->hasMatch()) {
                     $session->sendLocalizedMessage("YOU_ARE_ALREADY_ON_A_MATCH");
                 } elseif(!isset($args[1]) or !($playerSession instanceof Session)) {
                     $session->sendLocalizedMessage("NOT_AN_ONLINE_PLAYER", [
-                        "name" => $args[1]
+                        "name" => $args[1] ?? "Undefined"
                     ]);
                 } else {
                     $playerSession->addInvitation($session);
@@ -72,8 +72,10 @@ class DuelsCommand extends Command {
                 }
                 break;
             case "accept":
-                $playerSession = $this->loader->getSessionManager()->getSession($args[1] ?? array_pop($session->getInvitations()));
-                if($playerSession->hasMatch()) {
+                $invitations = $session->getInvitations();
+                $invitation = $args[1] ?? array_pop($invitations);
+                $playerSession = $this->loader->getSessionManager()->getSessionByName($invitation);
+                if($session->hasMatch()) {
                     $session->sendLocalizedMessage("YOU_ARE_ALREADY_ON_A_MATCH");
                 } elseif($playerSession != null and $session->hasInvitationFrom($playerSession)) {
                     $this->loader->getMatchManager()->startMatch($session, $playerSession);
@@ -84,8 +86,10 @@ class DuelsCommand extends Command {
                 }
                 break;
             case "deny":
-                $playerSession = $this->loader->getSessionManager()->getSession($args[1] ?? array_pop($session->getInvitations()));
-                if($playerSession->hasMatch()) {
+                $invitations = $session->getInvitations();
+                $invitation = $args[1] ?? array_pop($invitations);
+                $playerSession = $this->loader->getSessionManager()->getSessionByName($invitation);
+                if($session->hasMatch()) {
                     $session->sendLocalizedMessage("YOU_ARE_ALREADY_ON_A_MATCH");
                 } elseif($playerSession != null and $session->hasInvitationFrom($playerSession)) {
                     $session->removeInvitationFrom($playerSession);

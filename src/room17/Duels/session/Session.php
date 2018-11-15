@@ -97,28 +97,27 @@ class Session {
     }
 
     /**
-     * @param Session $invitation
+     * @param Session $session
      * @return bool
      */
-    public function hasInvitationFrom(Session $invitation): bool {
-        return in_array($invitation, $this->invitations);
+    public function hasInvitationFrom(Session $session): bool {
+        return isset($this->session[$session->getUsername()]);
     }
 
     /**
-     * @param Session $invite
+     * @param Session $session
      */
-    public function addInvitation(Session $invite): void {
-        $this->invitations[] = $invite;
+    public function addInvitation(Session $session): void {
+        $this->invitations[$session->getOwner()->getName()] = true;
     }
 
     /**
-     * Use this in a custom event, when player
      * @param Session $session
      */
     public function removeInvitationFrom(Session $session): void {
-        $key = array_search($session, $this->invitations);
-        if(isset($this->invitations[$key])) {
-            unset($this->invitations[$key]);
+        $username = (string) $session;
+        if(isset($this->invitations[$username])) {
+            unset($this->invitations[$username]);
         } else {
             $this->manager->getLoader()->getLogger()->error("Couldn't remove an invitation from $session because it doesn't exist");
         }
