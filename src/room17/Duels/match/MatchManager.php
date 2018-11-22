@@ -96,6 +96,13 @@ class MatchManager {
             "enemy" => $firstSession
         ]);
         $secondSession->getOwner()->teleport($arena->getSecondSpawn());
+        
+        $queueManager = $this->loader->getQueueManager();
+        if($queueManager->isIn($firstSession)) {
+            $queueManager->remove($firstSession);
+        } elseif($queueManager->isIn($secondSession)) {
+            $queueManager->remove($secondSession);
+        }
     
         foreach($this->loader->getServer()->getOnlinePlayers() as $player) {
             $firstPlayer = $firstSession->getOwner();

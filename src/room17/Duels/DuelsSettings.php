@@ -67,6 +67,7 @@ class DuelsSettings {
     
     public function refreshData(): void {
         $this->messages = json_decode(file_get_contents($this->loader->getDataFolder() . self::MESSAGE_FILE), true);
+        $this->messages = array_map(array($this->loader, "translateColors"), $this->messages);
     }
     
 }

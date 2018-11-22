@@ -99,6 +99,15 @@ class SessionManager {
     public function closeSession(Player $player): void {
         if(isset($this->sessions[$username = $player->getName()])) {
             $this->loader->getServer()->getPluginManager()->callEvent(new SessionCloseEvent($this->sessions[$username]));
+            foreach($this->sessions as $session) {
+                if($session->hasInvitationFrom($this->sessions[$username])) {
+                    $session->clearInvitationFrom($this->sessions[$username]);
+                }
+                if($session->getLastInvitationOwner() === $this->sessions[$username]->getOwner()) {
+                    $session->setLastInvitationOwner(null);
+                }
+            }
+            $this->sessions[$username]->clearAllInvitations();
             unset($this->sessions[$username]);
         } else {
             $this->loader->getLogger()->error("Trying to remove a not existing session for $username");

@@ -33,6 +33,12 @@ class Session {
     /** @var null|Match */
     private $match;
     
+    /** @var string[] */
+    private $invitations = [];
+    
+    /** @var null|Session */
+    private $lastInvitationOwner = null;
+    
     /**
      * Session constructor.
      * @param SessionManager $manager
@@ -76,6 +82,55 @@ class Session {
      */
     public function getMatch(): Match {
         return $this->match;
+    }
+    
+    /**
+     * @return null|Session
+     */
+    public function getLastInvitationOwner(): ?Session {
+        return $this->lastInvitationOwner;
+    }
+    
+    /**
+     * @param Session $session
+     * @return bool
+     */
+    public function hasInvitationFrom(Session $session): bool {
+        return isset($this->invitations[$session->getUsername()]);
+    }
+    
+    /**
+     * @param Session $session
+     */
+    public function addInvitationFrom(Session $session): void {
+        $this->invitations[$session->getUsername()] = true;
+        $this->lastInvitationOwner = $session;
+    }
+    
+    /**
+     * @param Session $session
+     */
+    public function clearInvitationFrom(Session $session): void {
+        if($this->hasInvitationFrom($session)) {
+            if($this->lastInvitationOwner === $session) {
+                $this->lastInvitationOwner = null;
+            }
+            unset($this->invitations[$session->getUsername()]);
+        } else {
+            $this->manager->getLoader()->getLogger()->error("Error trying to remove an invitation from $session");
+        }
+    }
+    
+    public function clearAllInvitations(): void {
+        $this->invitations = [];
+        $this->lastInvitationOwner = null;
+    }
+    
+    /**
+     * @param null|Session $owner
+     */
+    public function setLastInvitationOwner(?Session $owner): void {
+        $this->lastInvitationOwner = $owner;
     }
     
     /**

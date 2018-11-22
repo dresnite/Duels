@@ -104,9 +104,9 @@ class ArenaManager {
             $this->loader->getLogger()->warning("Overwriting arena {$identifier}, this might cause unexpected behaviour");
         }
         $event = new ArenaCreationEvent($arena = new Arena($identifier, $name, $author, $description, $level, $firstSpawn, $secondSpawn));
+        $this->loader->getServer()->getPluginManager()->callEvent($event);
         if(!$event->isCancelled()) {
             $this->arenas[$identifier] = $arena;
-            $this->loader->getServer()->getPluginManager()->callEvent($event);
         } else {
             $this->loader->getLogger()->debug("Couldn't create the arena $identifier because the event was cancelled");
         }

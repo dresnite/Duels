@@ -166,7 +166,7 @@ class Match {
                         $this->firstSession->getOwner()->teleport($firstSpawn);
                     }
     
-                    $secondPlayer = $this->firstSession->getOwner();
+                    $secondPlayer = $this->secondSession->getOwner();
                     if($secondPlayer->getFloorX() != $secondSpawn->getFloorX() or $secondPlayer->getFloorY() != $secondSpawn->getFloorY()) {
                         $this->secondSession->getOwner()->teleport($firstSpawn);
                     }
