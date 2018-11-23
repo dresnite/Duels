@@ -19,6 +19,8 @@ declare(strict_types=1);
 namespace room17\Duels;
 
 
+use pocketmine\utils\Config;
+
 class DuelsSettings {
     
     const MESSAGE_FILE = "messages.json";
@@ -29,6 +31,9 @@ class DuelsSettings {
     
     /** @var string[] */
     private $messages;
+    
+    /** @var Config */
+    private $settings;
     
     /**
      * DuelsSettings constructor.
@@ -65,9 +70,44 @@ class DuelsSettings {
         return $message;
     }
     
+    public function refreshArenas(): void {
+        $arenaManager = $this->loader->getArenaManager();
+        $server = $this->loader->getServer();
+        foreach($this->settings->get("arenas") as $identifier => $arenaData) {
+            if(!isset($arenaData["name"], $arenaData["author"], $arenaData["description"], $arenaData["levelName"],
+                $arenaData["firstSpawn"], $arenaData["secondSpawn"])) {
+                $this->loader->getLogger()->error("Couldn't load arena " . $arenaData["name"] ?? "Unknown");
+                continue;
+            }
+            $firstSpawn = Duels::parseVector3($arenaData["firstSpawn"]);
+            $secondSpawn = Duels::parseVector3($arenaData["secondSpawn"]);
+            if($firstSpawn != null and $secondSpawn != null) {
+                if(!$server->isLevelLoaded($arenaData["levelName"])) {
+                    $server->loadLevel($arenaData["levelName"]);
+                }
+                $level = $server->getLevelByName($arenaData["levelName"]);
+                if($level != null) {
+                    $arenaManager->registerArena($identifier, $arenaData["name"], $arenaData["author"],
+                        $arenaData["description"], $level, $firstSpawn, $secondSpawn);
+                } else {
+                    $this->loader->getLogger()->error("Couldn't load arena {$arenaData["name"]} because it didn't have a valid level");
+                }
+            } else {
+                $this->loader->getLogger()->error("Couldn't load arena {$arenaData["name"]} because the positions weren't properly formatted");
+            }
+        }
+        
+        if(empty($arenaManager->getArenas())) {
+            $this->loader->getLogger()->error("Couldn't start Duels because there weren't any arena available");
+            $server->getPluginManager()->disablePlugin($this->loader);
+        }
+    }
+    
     public function refreshData(): void {
         $this->messages = json_decode(file_get_contents($this->loader->getDataFolder() . self::MESSAGE_FILE), true);
         $this->messages = array_map(array($this->loader, "translateColors"), $this->messages);
+        $this->settings = new Config($this->loader->getDataFolder() . self::SETTINGS_FILE);
+        $this->refreshArenas();
     }
     
 }

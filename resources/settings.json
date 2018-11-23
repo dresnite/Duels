@@ -1,1 +1,12 @@
-{}
+{
+  "arenas":{
+    "typeAnIdentifierHere": {
+      "name": "Unknown",
+      "author": "Unknown",
+      "description": "Unknown",
+      "levelName": "test",
+      "firstSpawn": "-220,4,124",
+      "secondSpawn": "-220,4,124"
+    }
+  }
+}

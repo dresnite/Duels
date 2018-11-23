@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace room17\Duels;
 
 
+use pocketmine\math\Vector3;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\TextFormat;
 use room17\Duels\arena\ArenaManager;
@@ -31,9 +32,6 @@ class Duels extends PluginBase {
     
     /** @var Duels */
     private static $instance;
-    
-    /** @var DuelsSettings */
-    private $settings;
     
     /** @var SessionManager */
     private $sessionManager;
@@ -50,6 +48,9 @@ class Duels extends PluginBase {
     /** @var DuelsCommandMap */
     private $commandMap;
     
+    /** @var DuelsSettings */
+    private $settings;
+    
     public function onLoad(): void {
         self::$instance = $this;
         $this->saveResource(DuelsSettings::MESSAGE_FILE);
@@ -57,24 +58,19 @@ class Duels extends PluginBase {
     }
     
     public function onEnable(): void {
-        $this->settings = new DuelsSettings($this);
         $this->sessionManager = new SessionManager($this);
         $this->arenaManager = new ArenaManager($this);
         $this->matchManager = new MatchManager($this);
         $this->queueManager = new QueueManager($this);
         $this->commandMap = new DuelsCommandMap($this);
-        $this->getLogger()->info("Duels has been enabled");
+        $this->settings = new DuelsSettings($this);
+        if($this->isEnabled()) {
+            $this->getLogger()->info("Duels has been enabled");
+        }
     }
     
     public function onDisable(): void {
         $this->getLogger()->info("Duels has been disabled");
-    }
-    
-    /**
-     * @return DuelsSettings
-     */
-    public function getSettings(): DuelsSettings {
-        return $this->settings;
     }
     
     /**
@@ -120,6 +116,13 @@ class Duels extends PluginBase {
     }
     
     /**
+     * @return DuelsSettings
+     */
+    public function getSettings(): DuelsSettings {
+        return $this->settings;
+    }
+    
+    /**
      * @param string $message
      * @return string
      */
@@ -147,6 +150,25 @@ class Duels extends PluginBase {
         $message = str_replace("{ITALIC}", TextFormat::ITALIC, $message);
         $message = str_replace("{RESET}", TextFormat::RESET, $message);
         return $message;
+    }
+    
+    /**
+     * @param string $possibleVector
+     * @return null|Vector3
+     */
+    public static function parseVector3(string $possibleVector): ?Vector3 {
+        $pieces = explode(",", $possibleVector);
+        if(isset($pieces[2])) {
+            foreach($pieces as &$piece) {
+                if(is_numeric($piece)) {
+                    $piece = (int) $piece;
+                } else {
+                    return null;
+                }
+            }
+            return new Vector3($pieces[0], $pieces[1], $pieces[2]);
+        }
+        return null;
     }
     
 }
