@@ -108,7 +108,7 @@ class DuelsSettings {
         }
         
         if(empty($arenaManager->getArenas())) {
-            $this->loader->getLogger()->error("Couldn't start Duels because there weren't any arena available");
+            $this->loader->getLogger()->error("Couldn't start Duels because there weren't any arenas available");
             $server->getPluginManager()->disablePlugin($this->loader);
         }
     }
