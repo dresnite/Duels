@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace room17\Duels\session;
 
 
+use pocketmine\level\Location;
 use pocketmine\Player;
 use room17\Duels\match\Match;
 
@@ -38,6 +39,9 @@ class Session {
     
     /** @var null|Session */
     private $lastInvitationOwner = null;
+    
+    /** @var null|Location */
+    private $originalLocation = null;
     
     /**
      * Session constructor.
@@ -92,6 +96,13 @@ class Session {
     }
     
     /**
+     * @return null|Location
+     */
+    public function getOriginalLocation(): ?Location {
+        return $this->originalLocation;
+    }
+    
+    /**
      * @param Session $session
      * @return bool
      */
@@ -139,6 +150,14 @@ class Session {
      */
     public function setMatch(?Match $match): void {
         $this->match = $match;
+    }
+    
+    /**
+     * @internal
+     * @param null|Location $originalLocation
+     */
+    public function setOriginalLocation(?Location $originalLocation): void {
+        $this->originalLocation = $originalLocation;
     }
     
     /**

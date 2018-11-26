@@ -85,17 +85,21 @@ class MatchManager {
         
         $arena = $match->getArena();
         
+        $firstOwner = $firstSession->getOwner();
+        $firstSession->setOriginalLocation($firstOwner->getLocation());
         $firstSession->setMatch($match);
         $firstSession->sendLocalizedMessage("JOINED_MATCH", [
             "enemy" => $secondSession
         ]);
-        $firstSession->getOwner()->teleport($arena->getFirstSpawn());
-        
+        $firstOwner->teleport($arena->getFirstSpawn());
+    
+        $secondOwner = $secondSession->getOwner();
+        $secondSession->setOriginalLocation($secondOwner->getLocation());
         $secondSession->setMatch($match);
         $secondSession->sendLocalizedMessage("JOINED_MATCH", [
             "enemy" => $firstSession
         ]);
-        $secondSession->getOwner()->teleport($arena->getSecondSpawn());
+        $secondOwner->teleport($arena->getSecondSpawn());
         
         $queueManager = $this->loader->getQueueManager();
         if($queueManager->isIn($firstSession)) {

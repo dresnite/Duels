@@ -127,11 +127,15 @@ class Match {
      * @internal
      * @param Session $session
      */
-    public function removePlayer(Session $session) {
+    public function removePlayer(Session $session): void {
         $winner = ($session === $this->firstSession) ? $this->secondSession : $this->firstSession;
         
-        $winner->setMatch(null);
-        $session->setMatch(null);
+        /** @var Session $participant */
+        foreach([$winner, $session] as $participant) {
+            $participant->getOwner()->teleport($participant->getOriginalLocation());
+            $participant->setMatch(null);
+            $participant->setOriginalLocation(null);
+        }
         
         foreach($this->manager->getLoader()->getSessionManager()->getSessions() as $playerSession) {
             if($playerSession !== $session) {
