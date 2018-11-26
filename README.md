@@ -8,7 +8,7 @@ These instructions will get you a copy of the project up and running on your ser
 
 ### Installing
 
-This is a plug-and-play plugin, to install it you must drop its file inside your PocketMine's plugins folder. Make sure you
+This is a plug-and-play plugin, to install it you must drop its file inside your PocketMine's plugins folder.
 
 ### Configuring arenas
 
