@@ -22,27 +22,30 @@ namespace room17\Duels\match;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerQuitEvent;
+use room17\Duels\Duels;
 
 class MatchListener implements Listener {
     
-    /** @var MatchManager */
-    private $manager;
+    /** @var Duels */
+    private $loader;
     
     /**
      * MatchListener constructor.
      * @param MatchManager $manager
      */
     public function __construct(MatchManager $manager) {
-        $this->manager = $manager;
+        $this->loader = $manager->getLoader();
     }
     
     /**
      * @param PlayerDeathEvent $event
      */
     public function onDeath(PlayerDeathEvent $event): void {
-        $session = $this->manager->getLoader()->getSessionManager()->getSession($event->getPlayer());
+        $session = $this->loader->getSessionManager()->getSession($event->getPlayer());
         if($session->hasMatch()) {
             $session->getMatch()->removePlayer($session);
+            $event->setKeepInventory($this->loader->getSettings()->getKeepInventory());
+            $event->setDrops([]);
         }
     }
     
@@ -50,7 +53,7 @@ class MatchListener implements Listener {
      * @param PlayerQuitEvent $event
      */
     public function onQuit(PlayerQuitEvent $event): void {
-        $session = $this->manager->getLoader()->getSessionManager()->getSession($event->getPlayer());
+        $session = $this->loader->getSessionManager()->getSession($event->getPlayer());
         if($session->hasMatch()) {
             $session->getMatch()->removePlayer($session);
         }

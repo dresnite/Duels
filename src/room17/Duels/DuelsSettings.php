@@ -35,6 +35,9 @@ class DuelsSettings {
     /** @var Config */
     private $settings;
     
+    /** @var bool */
+    private $keepInventory;
+    
     /**
      * DuelsSettings constructor.
      * @param Duels $loader
@@ -68,6 +71,13 @@ class DuelsSettings {
             $message = str_replace("{" . $arg . "}", $value, $message);
         }
         return $message;
+    }
+    
+    /**
+     * @return bool
+     */
+    public function getKeepInventory(): bool {
+        return $this->keepInventory;
     }
     
     public function refreshArenas(): void {
@@ -107,6 +117,7 @@ class DuelsSettings {
         $this->messages = json_decode(file_get_contents($this->loader->getDataFolder() . self::MESSAGE_FILE), true);
         $this->messages = array_map(array($this->loader, "translateColors"), $this->messages);
         $this->settings = new Config($this->loader->getDataFolder() . self::SETTINGS_FILE);
+        $this->keepInventory = $this->settings->get("keepInventory", true);
         $this->refreshArenas();
     }
     

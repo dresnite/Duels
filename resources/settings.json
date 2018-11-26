@@ -1,5 +1,5 @@
 {
-  "arenas":{
+  "arenas": {
     "typeAnIdentifierHere": {
       "name": "Unknown",
       "author": "Unknown",
@@ -8,5 +8,6 @@
       "firstSpawn": "-220,4,124",
       "secondSpawn": "-220,4,124"
     }
-  }
+  },
+  "keepInventory": true
 }
