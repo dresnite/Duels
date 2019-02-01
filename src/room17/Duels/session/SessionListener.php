@@ -35,10 +35,11 @@ class SessionListener implements Listener {
     public function __construct(SessionManager $manager) {
         $this->manager = $manager;
     }
-    
+
     /**
      * @param PlayerLoginEvent $event
      * @priority LOWEST
+     * @throws \ReflectionException
      */
     public function onLogin(PlayerLoginEvent $event): void {
         if(!$event->isCancelled()) {
@@ -49,6 +50,7 @@ class SessionListener implements Listener {
     /**
      * @param PlayerQuitEvent $event
      * @priority HIGHEST
+     * @throws \ReflectionException
      */
     public function onQuit(PlayerQuitEvent $event): void {
         $this->manager->closeSession($event->getPlayer());

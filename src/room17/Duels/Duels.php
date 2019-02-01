@@ -56,7 +56,10 @@ class Duels extends PluginBase {
         $this->saveResource(DuelsSettings::MESSAGE_FILE);
         $this->saveResource(DuelsSettings::SETTINGS_FILE);
     }
-    
+
+    /**
+     * @throws \ReflectionException
+     */
     public function onEnable(): void {
         $this->sessionManager = new SessionManager($this);
         $this->arenaManager = new ArenaManager($this);

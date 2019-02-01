@@ -64,19 +64,20 @@ class MatchManager {
     public function getMatch(int $identifier): ?Match {
         return $this->matches[$identifier] ?? null;
     }
-    
+
     /**
      * @param Session $firstSession
      * @param Session $secondSession
-     * @param null|Arena $arena
+     * @param Arena|null $arena
      * @return bool
+     * @throws \ReflectionException
      */
     public function startMatch(Session $firstSession, Session $secondSession, ?Arena $arena = null): bool {
         $identifier = count($this->matches) + 1;
         
         $event = new MatchStartEvent($match = new Match($this, $identifier, ($arena ?? $this->loader->getArenaManager()->getRandomArena()),
             $firstSession, $secondSession));
-        $this->loader->getServer()->getPluginManager()->callEvent($event);
+        $event->call();
         
         if($event->isCancelled()) {
             $this->loader->getLogger()->debug("Couldn't create the match $identifier ($firstSession vs $secondSession) because the event was cancelled");
@@ -120,9 +121,10 @@ class MatchManager {
         $this->matches[$identifier] = $match;
         return true;
     }
-    
+
     /**
      * @param int $identifier
+     * @throws \ReflectionException
      */
     public function stopMatch(int $identifier): void {
         if(isset($this->matches[$identifier])) {
@@ -137,8 +139,8 @@ class MatchManager {
                     $secondPlayer->showPlayer($player);
                 }
             }
-            
-            $this->loader->getServer()->getPluginManager()->callEvent(new MatchStopEvent($this->matches[$identifier]));
+
+            (new MatchStopEvent($this->matches[$identifier]))->call();
             unset($this->matches[$identifier]);
         } else {
             $this->loader->getLogger()->warning("Trying to stop a match (id: $identifier) that does not exist");

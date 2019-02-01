@@ -50,10 +50,11 @@ class DuelsQueueCommand implements DuelsCommand {
     public function getAliases(): array {
         return ["search"];
     }
-    
+
     /**
      * @param Session $session
      * @param array $args
+     * @throws \ReflectionException
      */
     public function onCommand(Session $session, array $args = []): void {
         if($session->hasMatch()) {

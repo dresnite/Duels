@@ -61,9 +61,10 @@ class QueueManager {
     public function isIn(Session $session): bool {
         return isset($this->queue[$session->getUsername()]);
     }
-    
+
     /**
-     * @param Session[] ...$sessions
+     * @param Session ...$sessions
+     * @throws \ReflectionException
      */
     public function add(Session ...$sessions): void {
         foreach($sessions as $session) {
@@ -74,9 +75,9 @@ class QueueManager {
             $this->searchPossibleMatches();
         }
     }
-    
+
     /**
-     * @param Session[] ...$sessions
+     * @param Session ...$sessions
      */
     public function remove(Session ...$sessions): void {
         foreach($sessions as $session) {
@@ -87,14 +88,17 @@ class QueueManager {
             }
         }
     }
-    
+
+    /**
+     * @throws \ReflectionException
+     */
     public function searchPossibleMatches(): void {
         for($i = 0; $i < floor(count($this->queue) / 2); $i++) {
             $firstSession = array_shift($this->queue);
             $secondSession = array_shift($this->queue);
             $started = $this->loader->getMatchManager()->startMatch($firstSession, $secondSession);
             if($started) {
-                $this->loader->getServer()->getPluginManager()->callEvent(new QueueMatchEvent($firstSession, $secondSession));
+                (new QueueMatchEvent($firstSession, $secondSession))->call();
             } else {
                 $this->add($firstSession, $secondSession);
             }

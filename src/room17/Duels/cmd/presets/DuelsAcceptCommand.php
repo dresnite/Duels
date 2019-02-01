@@ -50,10 +50,11 @@ class DuelsAcceptCommand implements DuelsCommand {
     public function getAliases(): array {
         return ["acc"];
     }
-    
+
     /**
      * @param Session $session
      * @param array $args
+     * @throws \ReflectionException
      */
     public function onCommand(Session $session, array $args = []): void {
         if($session->hasMatch()) {

@@ -36,9 +36,10 @@ class MatchListener implements Listener {
     public function __construct(MatchManager $manager) {
         $this->loader = $manager->getLoader();
     }
-    
+
     /**
      * @param PlayerDeathEvent $event
+     * @throws \ReflectionException
      */
     public function onDeath(PlayerDeathEvent $event): void {
         $session = $this->loader->getSessionManager()->getSession($event->getPlayer());
@@ -48,9 +49,10 @@ class MatchListener implements Listener {
             $event->setDrops([]);
         }
     }
-    
+
     /**
      * @param PlayerQuitEvent $event
+     * @throws \ReflectionException
      */
     public function onQuit(PlayerQuitEvent $event): void {
         $session = $this->loader->getSessionManager()->getSession($event->getPlayer());

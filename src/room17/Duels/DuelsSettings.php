@@ -37,10 +37,11 @@ class DuelsSettings {
     
     /** @var bool */
     private $keepInventory;
-    
+
     /**
      * DuelsSettings constructor.
      * @param Duels $loader
+     * @throws \ReflectionException
      */
     public function __construct(Duels $loader) {
         $this->loader = $loader;
@@ -59,7 +60,7 @@ class DuelsSettings {
     public function getMessages(): array {
         return $this->messages;
     }
-    
+
     /**
      * @param string $identifier
      * @param array $args
@@ -79,7 +80,10 @@ class DuelsSettings {
     public function getKeepInventory(): bool {
         return $this->keepInventory;
     }
-    
+
+    /**
+     * @throws \ReflectionException
+     */
     public function refreshArenas(): void {
         $arenaManager = $this->loader->getArenaManager();
         $server = $this->loader->getServer();
@@ -112,7 +116,10 @@ class DuelsSettings {
             $server->getPluginManager()->disablePlugin($this->loader);
         }
     }
-    
+
+    /**
+     * @throws \ReflectionException
+     */
     public function refreshData(): void {
         $this->messages = json_decode(file_get_contents($this->loader->getDataFolder() . self::MESSAGE_FILE), true);
         $this->messages = array_map(array($this->loader, "translateColors"), $this->messages);

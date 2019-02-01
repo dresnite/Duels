@@ -122,10 +122,11 @@ class Match {
     public function setCountdown(int $countdown): void {
         $this->countdown = $countdown;
     }
-    
+
     /**
      * @internal
      * @param Session $session
+     * @throws \ReflectionException
      */
     public function removePlayer(Session $session): void {
         $winner = ($session === $this->firstSession) ? $this->secondSession : $this->firstSession;

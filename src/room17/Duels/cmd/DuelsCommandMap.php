@@ -21,7 +21,9 @@ namespace room17\Duels\cmd;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\command\PluginIdentifiableCommand;
 use pocketmine\Player;
+use pocketmine\plugin\Plugin;
 use room17\Duels\cmd\presets\DuelsAcceptCommand;
 use room17\Duels\cmd\presets\DuelsHelpCommand;
 use room17\Duels\cmd\presets\DuelsInviteCommand;
@@ -30,17 +32,18 @@ use room17\Duels\cmd\presets\DuelsRefuseCommand;
 use room17\Duels\Duels;
 use room17\Duels\event\cmd\DuelsCommandRegisterEvent;
 
-class DuelsCommandMap extends Command {
+class DuelsCommandMap extends Command implements PluginIdentifiableCommand {
 
     /** @var Duels */
     private $loader;
     
     /** @var DuelsCommand[] */
     private $commands = [];
-    
+
     /**
      * DuelsCommandMap constructor.
      * @param Duels $loader
+     * @throws \ReflectionException
      */
     public function __construct(Duels $loader) {
         $this->loader = $loader;
@@ -51,6 +54,13 @@ class DuelsCommandMap extends Command {
         $this->registerCommand(new DuelsRefuseCommand($this));
         parent::__construct("duels", "", null, ["duel"]);
         $loader->getServer()->getCommandMap()->register("duels", $this);
+    }
+
+    /**
+     * @return Plugin|Duels
+     */
+    public function getPlugin(): Plugin {
+        return $this->loader;
     }
     
     /**
@@ -79,13 +89,14 @@ class DuelsCommandMap extends Command {
         }
         return null;
     }
-    
+
     /**
      * @param DuelsCommand $command
+     * @throws \ReflectionException
      */
     public function registerCommand(DuelsCommand $command): void {
         $event = new DuelsCommandRegisterEvent($command);
-        $this->loader->getServer()->getPluginManager()->callEvent($event);
+        $event->call();
         if($event->isCancelled()) {
             $this->loader->getLogger()->debug("{$command->getName()} couldn't be registered");
         } else {

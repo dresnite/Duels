@@ -78,10 +78,10 @@ class SessionManager {
         }
         return null;
     }
-    
+
     /**
-     * @internal
      * @param Player $player
+     * @throws \ReflectionException
      */
     public function openSession(Player $player): void {
         if(isset($this->sessions[$username = $player->getName()])) {
@@ -89,16 +89,16 @@ class SessionManager {
         }
         $session = new Session($this, $player);
         $this->sessions[$username] = $session;
-        $this->loader->getServer()->getPluginManager()->callEvent(new SessionOpenEvent($session));
+        (new SessionOpenEvent($session))->call();
     }
-    
+
     /**
-     * @internal
      * @param Player $player
+     * @throws \ReflectionException
      */
     public function closeSession(Player $player): void {
         if(isset($this->sessions[$username = $player->getName()])) {
-            $this->loader->getServer()->getPluginManager()->callEvent(new SessionCloseEvent($this->sessions[$username]));
+            (new SessionCloseEvent($this->sessions[$username]))->call();
             foreach($this->sessions as $session) {
                 if($session->hasInvitationFrom($this->sessions[$username])) {
                     $session->clearInvitationFrom($this->sessions[$username]);

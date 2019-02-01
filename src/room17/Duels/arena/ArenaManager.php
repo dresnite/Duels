@@ -88,7 +88,7 @@ class ArenaManager {
         }
         return null;
     }
-    
+
     /**
      * @param string $identifier
      * @param string $name
@@ -97,6 +97,7 @@ class ArenaManager {
      * @param Level $level
      * @param Vector3 $firstSpawn
      * @param Vector3 $secondSpawn
+     * @throws \ReflectionException
      */
     public function registerArena(string $identifier, string $name, string $author, string $description, Level $level,
         Vector3 $firstSpawn, Vector3 $secondSpawn): void {
@@ -104,7 +105,7 @@ class ArenaManager {
             $this->loader->getLogger()->warning("Overwriting arena {$identifier}, this might cause unexpected behaviour");
         }
         $event = new ArenaCreationEvent($arena = new Arena($identifier, $name, $author, $description, $level, $firstSpawn, $secondSpawn));
-        $this->loader->getServer()->getPluginManager()->callEvent($event);
+        $event->call();
         if(!$event->isCancelled()) {
             $this->arenas[$identifier] = $arena;
         } else {
